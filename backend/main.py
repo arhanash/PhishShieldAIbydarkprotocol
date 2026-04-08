@@ -158,6 +158,10 @@ async def analyze(request: AnalyzeRequest):
     ml_prob = dummy_model.predict_proba(features)[0][1] 
     ml_score = int(ml_prob * 100)
     
+    # If ML score is high, add it to the reasons so the user isn't confused!
+    if ml_score > 60:
+        reasons.append(f"Machine Learning engine flagged structural anomalies (ML Confidence: {ml_score}%).")
+        
     # --- PHASE C: HYBRID RISK SCORING ---
     # Combine the two methodologies. 
     # Rule engine (60% weight) ensures known threats are caught immediately.
