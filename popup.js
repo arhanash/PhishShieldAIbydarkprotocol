@@ -8,9 +8,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const tabBtns = document.querySelectorAll('.tab-btn');
     const urlInputGroup = document.getElementById('url-input-group');
     const textInputGroup = document.getElementById('text-input-group');
+    const historyGroup = document.getElementById('history-group');
     const urlInput = document.getElementById('url-input');
     const textInput = document.getElementById('text-input');
     const getCurrentUrlBtn = document.getElementById('getCurrentUrlBtn');
+    
+    // History elements
+    const historyList = document.getElementById('historyList');
+    const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+    const emptyHistory = document.getElementById('emptyHistory');
     
     const analyzeBtn = document.getElementById('analyzeBtn');
     const btnText = document.getElementById('btnText');
@@ -41,12 +47,20 @@ document.addEventListener('DOMContentLoaded', () => {
             currentMode = e.target.getAttribute('data-tab');
             
             // Hide/unhide the proper input box
+            urlInputGroup.classList.add('hidden');
+            textInputGroup.classList.add('hidden');
+            historyGroup.classList.add('hidden');
+            document.querySelector('.input-section').classList.add('hidden');
+            
             if (currentMode === 'url') {
+                document.querySelector('.input-section').classList.remove('hidden');
                 urlInputGroup.classList.remove('hidden');
-                textInputGroup.classList.add('hidden');
-            } else {
+            } else if (currentMode === 'text') {
+                document.querySelector('.input-section').classList.remove('hidden');
                 textInputGroup.classList.remove('hidden');
-                urlInputGroup.classList.add('hidden');
+            } else if (currentMode === 'history') {
+                historyGroup.classList.remove('hidden');
+                loadHistory(); // Load data from storage
             }
             hideResults(); // clear old results on tab switch
         });
@@ -207,4 +221,42 @@ document.addEventListener('DOMContentLoaded', () => {
         if (status === 'Suspicious') return '#f59e0b'; // Yellow
         return '#ef4444'; // Red
     }
+
+    // ---------------------------------------------------------
+    // SECTION 7: Threat History Dashboard
+    // ---------------------------------------------------------
+    function loadHistory() {
+        chrome.storage.local.get({ threatHistory: [] }, (result) => {
+            const history = result.threatHistory;
+            historyList.innerHTML = '';
+            
+            if (history.length === 0) {
+                historyList.appendChild(emptyHistory);
+                emptyHistory.style.display = 'block';
+                return;
+            }
+            
+            history.forEach(item => {
+                const div = document.createElement('div');
+                div.className = 'history-item';
+                
+                const color = getScoreColor(item.status);
+                
+                div.innerHTML = `
+                    <div class="history-url">${item.url}</div>
+                    <div class="history-meta">
+                        <span style="color: ${color}; font-weight: bold;">${item.status} (Score: ${item.score})</span>
+                        <span class="history-time">${item.timestamp}</span>
+                    </div>
+                `;
+                historyList.appendChild(div);
+            });
+        });
+    }
+
+    clearHistoryBtn.addEventListener('click', () => {
+        chrome.storage.local.set({ threatHistory: [] }, () => {
+            loadHistory();
+        });
+    });
 });

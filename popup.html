@@ -35,10 +35,11 @@
         </header>
 
         <!-- SECTION 3: Input Tabs -->
-        <!-- Allows the user to toggle the UI between URL scanning and Text scanning -->
+        <!-- Allows the user to toggle the UI between URL scanning, Text scanning, and Threat History -->
         <div class="tabs">
             <button class="tab-btn active" data-tab="url">Scan URL</button>
             <button class="tab-btn" data-tab="text">Scan Text</button>
+            <button class="tab-btn" data-tab="history">Threat Log</button>
         </div>
 
         <!-- SECTION 4: Input Elements Container -->
@@ -64,6 +65,18 @@
                 <!-- Animated Spinner indicator injected by CSS when awaiting AI processing -->
                 <div class="spinner hidden" id="loadingSpinner"></div>
             </button>
+        </div>
+        
+        <!-- Threat History Dashboard - Hidden by default -->
+        <div id="history-group" class="hidden">
+            <div class="history-header">
+                <h3>Intercepted Threats</h3>
+                <button id="clearHistoryBtn" class="btn-secondary" style="font-size: 10px; padding: 4px 8px;">Clear Log</button>
+            </div>
+            <div class="history-list" id="historyList">
+                <!-- History items injected by JS -->
+                <div class="empty-history" id="emptyHistory">No threats logged yet. You are safe!</div>
+            </div>
         </div>
 
         <!-- Hidden error message block if the backend fails or input is empty -->

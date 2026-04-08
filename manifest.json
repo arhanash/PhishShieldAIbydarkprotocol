@@ -3,7 +3,7 @@
   "name": "PhishShield AI",
   "version": "1.0",
   "description": "Real-time AI Phishing Detection System",
-  "permissions": ["tabs", "scripting", "activeTab"],
+  "permissions": ["tabs", "scripting", "activeTab", "storage"],
   "host_permissions": ["<all_urls>", "http://127.0.0.1:8000/*", "http://localhost:8000/*"],
   "background": {
     "service_worker": "background.js"
@@ -15,7 +15,9 @@
   "content_scripts": [
     {
       "matches": ["<all_urls>"],
-      "js": ["content.js"]
+      "js": ["content.js"],
+      "css": ["content.css"],
+      "run_at": "document_end"
     }
   ]
 }

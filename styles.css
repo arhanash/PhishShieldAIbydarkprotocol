@@ -369,3 +369,72 @@ input[type="text"]:focus, textarea:focus {
   left: 0;
   color: var(--text-muted);
 }
+
+/* -------------------------------------------------------------
+ * SECTION 10: Threat History Dashboard
+ * ------------------------------------------------------------- */
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.history-header h3 {
+  font-size: 14px;
+  color: var(--text-main);
+}
+
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: 250px;
+  overflow-y: auto;
+}
+
+/* Scrollbar styling for history list */
+.history-list::-webkit-scrollbar {
+  width: 6px;
+}
+.history-list::-webkit-scrollbar-thumb {
+  background-color: var(--border);
+  border-radius: 4px;
+}
+
+.history-item {
+  background-color: var(--panel-bg);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.history-url {
+  font-size: 12px;
+  word-break: break-all;
+  color: var(--text-main);
+}
+
+.history-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+}
+
+.history-time {
+  color: var(--text-muted);
+}
+
+.empty-history {
+  text-align: center;
+  padding: 20px;
+  color: var(--text-muted);
+  font-size: 13px;
+  background: var(--panel-bg);
+  border-radius: 8px;
+  border: 1px dashed var(--border);
+}
