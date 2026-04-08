@@ -1,5 +1,10 @@
+// This event fires when the popup HTML is completely loaded.
 document.addEventListener('DOMContentLoaded', () => {
-    // UI Elements
+    
+    // ---------------------------------------------------------
+    // SECTION 1: UI Element Binding
+    // ---------------------------------------------------------
+    // We grab all the HTML elements by their ID so we can modify them via code
     const tabBtns = document.querySelectorAll('.tab-btn');
     const urlInputGroup = document.getElementById('url-input-group');
     const textInputGroup = document.getElementById('text-input-group');
@@ -19,16 +24,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const explanationBox = document.getElementById('explanationBox');
     const reasonsUl = document.getElementById('reasonsUl');
 
+    // State variable to track whether user is scanning a URL or Text
     let currentMode = 'url';
 
-    // Tab Switching
+    // ---------------------------------------------------------
+    // SECTION 2: Tab Switching Logic
+    // ---------------------------------------------------------
+    // Add click listeners to the tabs so the UI toggles between URL and Text boxes
     tabBtns.forEach(btn => {
         btn.addEventListener('click', (e) => {
+            // Remove 'active' class from all, then add to the clicked one
             tabBtns.forEach(b => b.classList.remove('active'));
             e.target.classList.add('active');
             
+            // Switch current mode
             currentMode = e.target.getAttribute('data-tab');
             
+            // Hide/unhide the proper input box
             if (currentMode === 'url') {
                 urlInputGroup.classList.remove('hidden');
                 textInputGroup.classList.add('hidden');
@@ -36,39 +48,51 @@ document.addEventListener('DOMContentLoaded', () => {
                 textInputGroup.classList.remove('hidden');
                 urlInputGroup.classList.add('hidden');
             }
-            hideResults();
+            hideResults(); // clear old results on tab switch
         });
     });
 
-    // Get current URL
+    // ---------------------------------------------------------
+    // SECTION 3: Chrome Extension API Interaction
+    // ---------------------------------------------------------
+    // This allows the extension to read the URL of the tab the user is currently looking at
     getCurrentUrlBtn.addEventListener('click', () => {
+        // Queries chrome for the active tab in the current window
         chrome.tabs.query({active: true, currentWindow: true}, function(tabs) {
+            // If successfully found, paste it into the URL input box automatically
             if(tabs && tabs[0]) {
                 urlInput.value = tabs[0].url;
             }
         });
     });
 
-    // Analyze click
+    // ---------------------------------------------------------
+    // SECTION 4: Analysis & API Communication
+    // ---------------------------------------------------------
+    // Runs when the user clicks the big "Analyze Target" button
     analyzeBtn.addEventListener('click', async () => {
         hideError();
         
+        // Grab the text depending on which tab is open
         const content = currentMode === 'url' ? urlInput.value.trim() : textInput.value.trim();
         
+        // Input validation
         if (!content) {
             showError(`Please enter a ${currentMode === 'url' ? 'URL' : 'text'} to analyze.`);
             return;
         }
 
-        setLoading(true);
+        setLoading(true); // show the spinner
         hideResults();
 
         try {
+            // We use JS Fetch API to contact our local Python server asynchronously
             const response = await fetch('http://127.0.0.1:8000/analyze', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                 },
+                // We stringify the payload exactly as the Python Pydantic Model expects
                 body: JSON.stringify({
                     content: content,
                     is_url: currentMode === 'url'
@@ -79,16 +103,24 @@ document.addEventListener('DOMContentLoaded', () => {
                 throw new Error('Backend server is not running or returned an error.');
             }
 
+            // Parse the JSON data sent from Python
             const data = await response.json();
+            
+            // Render the data on the screen
             displayResults(data);
             
         } catch (err) {
             showError(`API Error: Make sure your Python backend is running on http://127.0.0.1:8000! (${err.message})`);
         } finally {
-            setLoading(false);
+            setLoading(false); // hide the spinner regardless of success/fail
         }
     });
 
+    // ---------------------------------------------------------
+    // SECTION 5: UI Helper Functions
+    // ---------------------------------------------------------
+    
+    // Toggles the spinning animation and disables button so they don't spam click
     function setLoading(isLoading) {
         if (isLoading) {
             btnText.classList.add('hidden');
@@ -114,26 +146,31 @@ document.addEventListener('DOMContentLoaded', () => {
         resultsCard.classList.add('hidden');
     }
 
+    // ---------------------------------------------------------
+    // SECTION 6: DOM Manipulation (Explainability feature)
+    // ---------------------------------------------------------
+    // Responsible for taking backend data and painting the visual result components
     function displayResults(data) {
+        // Destructure the API response
         const { status, risk_score, reasons } = data;
         
-        // Update Score
+        // 1. Update the physical Score Number (e.g. 75/100)
         scoreValue.textContent = risk_score;
         scoreValue.style.color = getScoreColor(status);
         
-        // Update Status Badge
+        // 2. Update Status Text Badge (Safe/Suspicious/Dangerous)
         statusBadge.textContent = status;
-        statusBadge.className = 'status-badge'; // reset
-        statusBadge.classList.add(`status-${status.toLowerCase()}`);
+        statusBadge.className = 'status-badge'; // reset styles
+        statusBadge.classList.add(`status-${status.toLowerCase()}`); // apply appropriate CSS color class
         
-        // Update Bar
+        // 3. Animate the colored Risk Bar width
         scoreBar.className = 'score-bar'; // reset
         scoreBar.classList.add(`bg-${status.toLowerCase()}`);
         setTimeout(() => {
-            scoreBar.style.width = `${risk_score}%`;
-        }, 50); // delay for css transition effect
+            scoreBar.style.width = `${risk_score}%`; // dynamically set width based on integer score
+        }, 50); // slight delay forces the CSS transition animation to trigger
         
-        // Explanation logic
+        // 4. Generate the short Human-Readable Explainer
         let expText = "";
         if (status === "Safe") {
             expText = "This passes all rule-based checks and the ML engine finds no structural anomalies. It appears safe.";
@@ -143,10 +180,11 @@ document.addEventListener('DOMContentLoaded', () => {
             expText = "Warning! Our detection engine classifies this as highly dangerous. DO NOT proceed or provide personal info.";
         }
         explanationBox.textContent = expText;
+        // Make the side border of the explainer box match the threat level color
         explanationBox.style.borderLeftColor = getScoreColor(status);
 
-        // Update Reasons Details
-        reasonsUl.innerHTML = '';
+        // 5. Append all the specific detailed reasons from Python into a bulleted list
+        reasonsUl.innerHTML = ''; // clear old list
         if (reasons && reasons.length > 0) {
             reasons.forEach(r => {
                 const li = document.createElement('li');
@@ -159,12 +197,14 @@ document.addEventListener('DOMContentLoaded', () => {
             reasonsUl.appendChild(li);
         }
 
+        // Make the whole result card visible
         resultsCard.classList.remove('hidden');
     }
 
+    // Determines CSS hex codes for themes based on threat level
     function getScoreColor(status) {
-        if (status === 'Safe') return '#10b981';
-        if (status === 'Suspicious') return '#f59e0b';
-        return '#ef4444';
+        if (status === 'Safe') return '#10b981'; // Green
+        if (status === 'Suspicious') return '#f59e0b'; // Yellow
+        return '#ef4444'; // Red
     }
 });

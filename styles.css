@@ -1,32 +1,45 @@
+/* -------------------------------------------------------------
+ * SECTION 1: CSS Variables & Global Theming
+ * ------------------------------------------------------------- */
 :root {
-  --bg-color: #0f172a;
-  --panel-bg: #1e293b;
-  --text-main: #f8fafc;
-  --text-muted: #94a3b8;
-  --primary: #3b82f6;
-  --primary-hover: #2563eb;
-  --safe: #10b981;
-  --suspicious: #f59e0b;
-  --dangerous: #ef4444;
+  /* We define variables here so we can change the entire app's color scheme at once */
+  --bg-color: #0f172a;       /* Deep dark blue background */
+  --panel-bg: #1e293b;       /* Slightly lighter dark blue for cards/inputs */
+  --text-main: #f8fafc;      /* Crisp white text for high contrast */
+  --text-muted: #94a3b8;     /* Grayish text for subtitles/inactive items */
+  --primary: #3b82f6;        /* Bright blue for primary actions (buttons) */
+  --primary-hover: #2563eb;  /* Darker blue for hover states */
+  
+  /* Status Colors for our Phishing Risk Levels */
+  --safe: #10b981;           /* Green for 0-30 scores */
+  --suspicious: #f59e0b;     /* Yellow/Orange for 31-69 scores */
+  --dangerous: #ef4444;      /* High alert Red for 70-100 scores */
+  
   --border: #334155;
-  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+/* Reset basic spacing for consistency across browsers */
 * {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
 }
 
+/* -------------------------------------------------------------
+ * SECTION 2: Body & Window Sizing
+ * ------------------------------------------------------------- */
 body {
   font-family: var(--font-family);
   background-color: var(--bg-color);
   color: var(--text-main);
+  /* Hardcode width/height so the Chrome Extension popup window looks perfect */
   width: 360px;
   min-height: 480px;
   overflow-x: hidden;
 }
 
+/* Main wrapper with 20px padding */
 .container {
   padding: 20px;
   display: flex;
@@ -34,6 +47,9 @@ body {
   gap: 16px;
 }
 
+/* -------------------------------------------------------------
+ * SECTION 3: Typography & Branding
+ * ------------------------------------------------------------- */
 header {
   text-align: center;
   padding-bottom: 12px;
@@ -52,6 +68,7 @@ header {
   gap: 8px;
 }
 
+/* We use a CSS text background clip to give the title text a slick gradient look */
 h1 {
   font-size: 20px;
   font-weight: 700;
@@ -65,6 +82,9 @@ h1 {
   color: var(--text-muted);
 }
 
+/* -------------------------------------------------------------
+ * SECTION 4: Tab Navigation
+ * ------------------------------------------------------------- */
 .tabs {
   display: flex;
   background-color: var(--panel-bg);
@@ -72,6 +92,7 @@ h1 {
   padding: 4px;
 }
 
+/* Transition provides a smooth fade when hovering/clicking tabs */
 .tab-btn {
   flex: 1;
   background: transparent;
@@ -91,12 +112,16 @@ h1 {
   box-shadow: 0 2px 4px rgba(0,0,0,0.1);
 }
 
+/* -------------------------------------------------------------
+ * SECTION 5: Input Forms & Buttons
+ * ------------------------------------------------------------- */
 .input-section {
   display: flex;
   flex-direction: column;
   gap: 12px;
 }
 
+/* A utility class used by Javascript to quickly hide elements */
 .hidden {
   display: none !important;
 }
@@ -107,6 +132,7 @@ h1 {
   gap: 8px;
 }
 
+/* Input fields matching the dark mode theming */
 input[type="text"], textarea {
   width: 100%;
   background-color: var(--panel-bg);
@@ -126,9 +152,10 @@ textarea {
 
 input[type="text"]:focus, textarea:focus {
   outline: none;
-  border-color: var(--primary);
+  border-color: var(--primary); /* Glow blue when user clicks inside */
 }
 
+/* Buttons */
 .actions-row {
   display: flex;
   justify-content: flex-end;
@@ -177,13 +204,16 @@ input[type="text"]:focus, textarea:focus {
   box-shadow: none;
 }
 
+/* -------------------------------------------------------------
+ * SECTION 6: Loading Feedback Animation
+ * ------------------------------------------------------------- */
 .spinner {
   width: 20px;
   height: 20px;
   border: 3px solid rgba(255,255,255,0.3);
   border-radius: 50%;
   border-top-color: white;
-  animation: spin 1s ease-in-out infinite;
+  animation: spin 1s ease-in-out infinite; /* Trigger keyframe iteration */
 }
 
 @keyframes spin {
@@ -199,7 +229,9 @@ input[type="text"]:focus, textarea:focus {
   border-radius: 6px;
 }
 
-/* Results Card Styles */
+/* -------------------------------------------------------------
+ * SECTION 7: Analytics Output Card Styling
+ * ------------------------------------------------------------- */
 .results-card {
   background-color: var(--panel-bg);
   border-radius: 12px;
@@ -208,7 +240,8 @@ input[type="text"]:focus, textarea:focus {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  animation: slideUp 0.3s ease-out;
+  /* Animate sliding up smoothly when JS injects results */
+  animation: slideUp 0.3s ease-out; 
 }
 
 @keyframes slideUp {
@@ -222,6 +255,7 @@ input[type="text"]:focus, textarea:focus {
   align-items: center;
 }
 
+/* Badge background with low opacity coloring to make text pop */
 .status-badge {
   padding: 4px 12px;
   border-radius: 16px;
@@ -231,6 +265,7 @@ input[type="text"]:focus, textarea:focus {
   letter-spacing: 0.5px;
 }
 
+/* JS Dynamically applies one of these 3 depending on threat level */
 .status-safe {
   background-color: rgba(16, 185, 129, 0.15);
   color: var(--safe);
@@ -270,6 +305,9 @@ input[type="text"]:focus, textarea:focus {
   color: var(--text-muted);
 }
 
+/* -------------------------------------------------------------
+ * SECTION 8: Animated Risk Meter Bar
+ * ------------------------------------------------------------- */
 .score-bar-container {
   height: 8px;
   background-color: var(--bg-color);
@@ -279,22 +317,27 @@ input[type="text"]:focus, textarea:focus {
 
 .score-bar {
   height: 100%;
-  width: 0%;
+  width: 0%; /* JS will edit this width mapping to 0-100 score */
   border-radius: 4px;
+  /* Provides the smooth filling up animation like a progress bar */
   transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* JS sets colors dynamically */
 .bg-safe { background-color: var(--safe); }
 .bg-suspicious { background-color: var(--suspicious); }
 .bg-dangerous { background-color: var(--dangerous); }
 
+/* -------------------------------------------------------------
+ * SECTION 9: Explainability Text Styling
+ * ------------------------------------------------------------- */
 .explanation-box {
   background-color: var(--bg-color);
   padding: 12px;
   border-radius: 8px;
   font-size: 14px;
   line-height: 1.5;
-  border-left: 3px solid var(--primary);
+  border-left: 3px solid var(--primary); /* The left color block */
 }
 
 .reasons-list h3 {
@@ -319,6 +362,7 @@ input[type="text"]:focus, textarea:focus {
   color: var(--text-main);
 }
 
+/* Custom bullet styling */
 .reasons-list li::before {
   content: "•";
   position: absolute;
