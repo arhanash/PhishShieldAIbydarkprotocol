@@ -1,15 +1,16 @@
 {
   "manifest_version": 3,
-  "name": "PhishGuard",
+  "name": "PhishShield AI",
   "version": "1.0",
-  "description": "Detect phishing websites in real-time",
-  "permissions": ["tabs", "scripting"],
-  "host_permissions": ["<all_urls>"],
+  "description": "Real-time AI Phishing Detection System",
+  "permissions": ["tabs", "scripting", "activeTab"],
+  "host_permissions": ["<all_urls>", "http://127.0.0.1:8000/*", "http://localhost:8000/*"],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_title": "PhishShield AI"
   },
   "content_scripts": [
     {

@@ -1,5 +1,327 @@
+:root {
+  --bg-color: #0f172a;
+  --panel-bg: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --primary: #3b82f6;
+  --primary-hover: #2563eb;
+  --safe: #10b981;
+  --suspicious: #f59e0b;
+  --dangerous: #ef4444;
+  --border: #334155;
+  --font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
 body {
-    font-family: Arial;
-    text-align: center;
-    padding: 10px;
+  font-family: var(--font-family);
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  width: 360px;
+  min-height: 480px;
+  overflow-x: hidden;
+}
+
+.container {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+header {
+  text-align: center;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+
+.logo-container {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 8px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+h1 {
+  font-size: 20px;
+  font-weight: 700;
+  background: linear-gradient(to right, #3b82f6, #8b5cf6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.subtitle {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.tabs {
+  display: flex;
+  background-color: var(--panel-bg);
+  border-radius: 8px;
+  padding: 4px;
+}
+
+.tab-btn {
+  flex: 1;
+  background: transparent;
+  border: none;
+  padding: 8px 0;
+  color: var(--text-muted);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s ease;
+}
+
+.tab-btn.active {
+  background-color: var(--border);
+  color: var(--text-main);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.input-section {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.hidden {
+  display: none !important;
+}
+
+.input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+input[type="text"], textarea {
+  width: 100%;
+  background-color: var(--panel-bg);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 14px;
+  font-family: var(--font-family);
+  transition: border-color 0.2s;
+}
+
+textarea {
+  min-height: 100px;
+  resize: vertical;
+}
+
+input[type="text"]:focus, textarea:focus {
+  outline: none;
+  border-color: var(--primary);
+}
+
+.actions-row {
+  display: flex;
+  justify-content: flex-end;
+}
+
+.btn-secondary {
+  background-color: transparent;
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-secondary:hover {
+  background-color: var(--border);
+  color: var(--text-main);
+}
+
+.btn-primary {
+  background-color: var(--primary);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background-color 0.2s;
+  box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.4);
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-primary:disabled {
+  background-color: var(--border);
+  color: var(--text-muted);
+  cursor: not-allowed;
+  box-shadow: none;
+}
+
+.spinner {
+  width: 20px;
+  height: 20px;
+  border: 3px solid rgba(255,255,255,0.3);
+  border-radius: 50%;
+  border-top-color: white;
+  animation: spin 1s ease-in-out infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.error-msg {
+  color: var(--dangerous);
+  font-size: 13px;
+  text-align: center;
+  padding: 8px;
+  background-color: rgba(239, 68, 68, 0.1);
+  border-radius: 6px;
+}
+
+/* Results Card Styles */
+.results-card {
+  background-color: var(--panel-bg);
+  border-radius: 12px;
+  padding: 16px;
+  border: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.status-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.status-badge {
+  padding: 4px 12px;
+  border-radius: 16px;
+  font-size: 14px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-safe {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: var(--safe);
+  border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.status-suspicious {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: var(--suspicious);
+  border: 1px solid rgba(245, 158, 11, 0.3);
+}
+
+.status-dangerous {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: var(--dangerous);
+  border: 1px solid rgba(239, 68, 68, 0.3);
+}
+
+.score-container {
+  text-align: right;
+}
+
+.score-text {
+  display: block;
+  font-size: 11px;
+  color: var(--text-muted);
+  text-transform: uppercase;
+}
+
+.score-value {
+  font-size: 24px;
+  font-weight: 800;
+}
+
+.score-max {
+  font-size: 12px;
+  color: var(--text-muted);
+}
+
+.score-bar-container {
+  height: 8px;
+  background-color: var(--bg-color);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.score-bar {
+  height: 100%;
+  width: 0%;
+  border-radius: 4px;
+  transition: width 1s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.bg-safe { background-color: var(--safe); }
+.bg-suspicious { background-color: var(--suspicious); }
+.bg-dangerous { background-color: var(--dangerous); }
+
+.explanation-box {
+  background-color: var(--bg-color);
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 14px;
+  line-height: 1.5;
+  border-left: 3px solid var(--primary);
+}
+
+.reasons-list h3 {
+  font-size: 13px;
+  color: var(--text-muted);
+  margin-bottom: 8px;
+  font-weight: 600;
+}
+
+.reasons-list ul {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.reasons-list li {
+  font-size: 13px;
+  line-height: 1.4;
+  position: relative;
+  padding-left: 16px;
+  color: var(--text-main);
+}
+
+.reasons-list li::before {
+  content: "•";
+  position: absolute;
+  left: 0;
+  color: var(--text-muted);
 }

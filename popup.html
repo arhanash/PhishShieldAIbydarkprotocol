@@ -1,11 +1,80 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PhishShield AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-  <h2>PhishGuard</h2>
-  <p id="status">Checking...</p>
-  <script src="popup.js"></script>
+    <div class="container">
+        <header>
+            <div class="logo-container">
+                <div class="logo">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 22S21 17.55 21 11V5L12 2L3 5V11C3 17.55 12 22 12 22Z" fill="url(#paint0_linear)"/>
+                        <path d="M10.5 15.5L6.5 11.5L7.91 10.09L10.5 12.67L16.09 7.09L17.5 8.5L10.5 15.5Z" fill="white"/>
+                        <defs>
+                            <linearGradient id="paint0_linear" x1="12" y1="2" x2="12" y2="22" gradientUnits="userSpaceOnUse">
+                                <stop stop-color="#3B82F6"/>
+                                <stop offset="1" stop-color="#8B5CF6"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                    <h1>PhishShield AI</h1>
+                </div>
+            </div>
+            <p class="subtitle">Real-Time Hybrid Threat Detection</p>
+        </header>
+
+        <div class="tabs">
+            <button class="tab-btn active" data-tab="url">Scan URL</button>
+            <button class="tab-btn" data-tab="text">Scan Text</button>
+        </div>
+
+        <div class="input-section">
+            <div id="url-input-group" class="input-group">
+                <input type="text" id="url-input" placeholder="Enter URL to scan... Ex: http://secure-login.xyz" autocomplete="off">
+                <div class="actions-row">
+                    <button class="btn-secondary" id="getCurrentUrlBtn" title="Grab URL from the active tab">Use Current Tab</button>
+                </div>
+            </div>
+            
+            <div id="text-input-group" class="input-group hidden">
+                <textarea id="text-input" placeholder="Paste email content or message here..."></textarea>
+            </div>
+
+            <button id="analyzeBtn" class="btn-primary">
+                <span id="btnText">Analyze Target</span>
+                <div class="spinner hidden" id="loadingSpinner"></div>
+            </button>
+        </div>
+
+        <div id="errorMsg" class="error-msg hidden"></div>
+
+        <div id="resultsCard" class="results-card hidden">
+            <div class="status-header">
+                <div class="status-badge" id="statusBadge">Status</div>
+                <div class="score-container">
+                    <span class="score-text">Risk Score</span>
+                    <span id="scoreValue" class="score-value">0</span><span class="score-max">/100</span>
+                </div>
+            </div>
+            <div class="score-bar-container">
+                <div id="scoreBar" class="score-bar"></div>
+            </div>
+            
+            <div class="explanation-box" id="explanationBox">
+                <!-- Short explanation goes here -->
+            </div>
+
+            <div class="reasons-list">
+                <h3>Detection Details</h3>
+                <ul id="reasonsUl"></ul>
+            </div>
+        </div>
+    </div>
+    <script src="popup.js"></script>
 </body>
 </html>
