@@ -1,4 +1,4 @@
-const API_URL = "http://127.0.0.1:8000/analyze"; // Change this to the Render URL once deployed online
+const API_URL = "https://phishshield-ai-1hjg.onrender.com/analyze"; // Deployed online URL
 
 // Listen for messages from content.js (the auto-scanner)
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {

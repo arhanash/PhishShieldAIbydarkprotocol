@@ -101,7 +101,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
         try {
             // We use JS Fetch API to contact our local Python server asynchronously
-            const response = await fetch('http://127.0.0.1:8000/analyze', {
+            const response = await fetch('https://phishshield-ai-1hjg.onrender.com/analyze', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -124,7 +124,7 @@ document.addEventListener('DOMContentLoaded', () => {
             displayResults(data);
             
         } catch (err) {
-            showError(`API Error: Make sure your Python backend is running on http://127.0.0.1:8000! (${err.message})`);
+            showError(`API Error: Make sure your Python backend is running! (${err.message})`);
         } finally {
             setLoading(false); // hide the spinner regardless of success/fail
         }
