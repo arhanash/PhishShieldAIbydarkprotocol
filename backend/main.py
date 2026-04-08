@@ -60,6 +60,9 @@ dummy_model.fit(X_train, y_train)
 # These are common words cybercriminals use to create urgency or deceive users.
 SUSPICIOUS_KEYWORDS = ['login', 'verify', 'update', 'bank', 'password', 'secure', 'account']
 
+# A list of highly targeted brands. We will check if the input contains a slight misspelling of these!
+TARGET_BRANDS = ['microsoft', 'paypal', 'google', 'apple', 'linkedin', 'netflix', 'amazon']
+
 # A helper function to turn the raw text into the 3 numerical features our ML model understands.
 def extract_features(content: str):
     length = len(content)
@@ -86,26 +89,35 @@ async def analyze(request: AnalyzeRequest):
     rule_score = 0
     reasons = [] # We'll populate this with human-readable explanations based on triggered risks
     
+    # Force URL checking if the text obviously contains a link or an email address, even if pasted in the 'Text' tab
+    if "http" in content or "www." in content or "@" in content:
+        request.is_url = True
+
     # --- PHASE A: RULE-BASED ANALYSIS ---
     # We apply hard-coded rules for precise, known phishing patterns.
     if request.is_url:
         
         # Rule 1: Abnormally long URLs (often used to obscure the fake domain name)
         if len(content) > 75:
-            rule_score += 30
-            reasons.append("URL length exceeds normal limits (too long).")
+            rule_score += 20
+            reasons.append("Length exceeds normal limits (too long).")
             
-        # Rule 2: Basic HTTP (Phishing sites occasionally avoid setting up SSL/HTTPS certs)
+        # Rule 2: Basic HTTP or IP addresses
         if content.startswith("http://"):
             rule_score += 20
             reasons.append("Uses HTTP instead of secure HTTPS.")
             
-        # Rule 3: The '@' Symbol (Browsers ignore everything before '@', tricking users)
-        if "@" in content:
-            rule_score += 40
-            reasons.append("Contains '@' symbol, a common tactic to obscure the true domain.")
+        if re.search(r'\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b', content):
+            rule_score += 50
+            reasons.append("Target uses a raw IP address instead of a domain name.")
             
-        # Rule 4: Typosquatting/Subdomain stuffing (e.g. www.secure-login.paypal.fake.com)
+        # Rule 3: The '@' Symbol (Browsers ignore everything before '@', tricking users)
+        if "@" in content and not re.match(r"[^@]+@[^@]+\.[^@]+", content):
+            # If it has an @ but isn't a strict email format
+            rule_score += 40
+            reasons.append("Contains generic '@' symbol (often obscures true domain).")
+            
+        # Rule 4: Typosquatting/Subdomain stuffing
         if content.count('.') > 3:
             rule_score += 20
             reasons.append("Too many subdomains, often used to mimic legitimate sites.")
@@ -114,8 +126,28 @@ async def analyze(request: AnalyzeRequest):
     found_keywords = [kw for kw in SUSPICIOUS_KEYWORDS if kw in content]
     if found_keywords:
         rule_score += 15 * len(found_keywords) # Increase score for EVERY bad word found
-        reasons.append(f"Contains suspicious keywords: {', '.join(found_keywords)}.")
+        reasons.append(f"Contains urgent keywords: {', '.join(found_keywords)}.")
         
+    # --- NEW ADVANCED FEATURE: TYPOSQUATTING DETECTION ---
+    # We check if they are trying to mimic a real brand (e.g. rnicrosoft instead of microsoft)
+    for brand in TARGET_BRANDS:
+        # If the exact brand is NOT in there...
+        if brand not in content:
+            # But a visually similar fake IS in there...
+            fake_brand_m= brand.replace('m', 'rn')
+            fake_brand_l = brand.replace('l', '1')
+            fake_brand_i = brand.replace('i', 'l')
+            fake_brand_o = brand.replace('o', '0')
+            fake_brand_a = brand.replace('a', '@')
+            
+            fakes = [fake_brand_m, fake_brand_l, fake_brand_i, fake_brand_o, fake_brand_a]
+            
+            for fake in fakes:
+                if fake != brand and fake in content:
+                    rule_score += 80  # Massive penalty for typosquatting
+                    reasons.append(f"🚨 Typosquatting Alert: Trying to impersonate '{brand}'.")
+                    break
+
     # Cap the rule score so it doesn't overflow
     rule_score = min(rule_score, 100)
     
@@ -133,11 +165,11 @@ async def analyze(request: AnalyzeRequest):
     final_score = int((rule_score * 0.6) + (ml_score * 0.4))
     
     # Determine Status Classification based on final score brackets
-    if final_score < 30:
+    if final_score < 25:
         status = "Safe"
         if not reasons:
             reasons.append("No suspicious patterns or ML threats detected.")
-    elif final_score < 70:
+    elif final_score < 65:
         status = "Suspicious"
     else:
         status = "Dangerous"

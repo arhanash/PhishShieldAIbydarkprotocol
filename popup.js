@@ -187,9 +187,13 @@ document.addEventListener('DOMContentLoaded', () => {
         // 4. Generate the short Human-Readable Explainer
         let expText = "";
         if (status === "Safe") {
-            expText = "This passes all rule-based checks and the ML engine finds no structural anomalies. It appears safe.";
+            if (reasons.length > 0 && risk_score > 0) {
+                expText = "This target triggered minor warnings, but overall structure and ML analysis indicate it is likely safe.";
+            } else {
+                expText = "This passes all rule-based checks and the ML engine finds no structural anomalies. It appears completely safe.";
+            }
         } else if (status === "Suspicious") {
-            expText = "Our hybrid detection flagged some risky behaviors in this target. Proceed with caution.";
+            expText = "Our hybrid detection flagged risky behaviors or typosquatting. Proceed with caution.";
         } else {
             expText = "Warning! Our detection engine classifies this as highly dangerous. DO NOT proceed or provide personal info.";
         }
