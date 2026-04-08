@@ -60,15 +60,15 @@ Click on the extension to open the UI dashboard. Select the "Scan Text" tab and 
 
 ---
 
-## 👨‍💻 Meet Team SyntaXsurvival
+## 👨‍💻 Meet Team Dark Protocol
 
-- **[Arhan Ashraf](https://github.com/arhanash)** *(Team Lead)*
-- **[Peter Jjjo Manavalan](https://github.com/Petezzzz)**
-- **[Arjun Anil](https://github.com/arjun669)**
-- **[Mohammed Feril Cotticollan](https://github.com/muhammedferil)**
-- **[Elijah Ajith](https://github.com/ELIJAH-bit-dev/ea1867)**
+- **[ARHAN ASHRAF](https://github.com/arhanash)** *(Team Lead)*
+- **[PETER JJJO MANAVALAN](https://github.com/Petezzzz)**
+- **[ARJUN ANIL](https://github.com/arjun669)**
+- **[MOHAMMED FERIL COTTICOLLAN](https://github.com/muhammedferil)**
+- **[ELIJAH AJITH](https://github.com/ELIJAH-bit-dev/ea1867)**
 
 <br>
 <div align="center">
-  <p>Built with ❤️ by Team SyntaXsurvival</p>
+  <p>Built with ❤️ by Team Dark Protocol</p>
 </div>
