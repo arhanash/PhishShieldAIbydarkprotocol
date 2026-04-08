@@ -71,8 +71,13 @@ def extract_features(content: str):
     return np.array([[length, dots, special_chars]])
 
 # ---------------------------------------------------------
-# SECTION 5: Core Detection Engine (The Main API Endpoint)
+# SECTION 5: Core Detection Engine (The Main API Endpoints)
 # ---------------------------------------------------------
+# A simple health check at the root so if you open the backend in a browser, it doesn't give a 404 error.
+@app.get("/")
+async def root():
+    return {"message": "✅ PhishShield AI Backend is successfully running!", "status": "active"}
+
 # This function triggers every time the extension clicks "Analyze"
 @app.post("/analyze")
 async def analyze(request: AnalyzeRequest):
