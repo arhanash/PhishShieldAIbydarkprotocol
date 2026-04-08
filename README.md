@@ -59,6 +59,16 @@ Click on the extension to open the UI dashboard. Select the "Scan Text" tab and 
 > *"URGENT: Your secure bank login needs an update immediately. Verify your account at http://secure-login-update.xyz/@fake"*
 
 ---
+
+## 👨‍💻 Meet Team SyntaXsurvival
+
+- **[Arhan Ashraf](https://github.com/arhanash)** *(Team Lead)*
+- **[Peter Jjjo Manavalan](https://github.com/Petezzzz)**
+- **[Arjun Anil](https://github.com/arjun669)**
+- **[Mohammed Feril Cotticollan](https://github.com/muhammedferil)**
+- **[Elijah Ajith](https://github.com/ELIJAH-bit-dev/ea1867)**
+
+<br>
 <div align="center">
   <p>Built with ❤️ by Team SyntaXsurvival</p>
 </div>
